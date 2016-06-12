@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}"{% if LANGUAGE_BIDI %} dir="rtl"{% endif %}>
+	{% load pages_tags mezzanine_tags i18n future staticfiles %}
+
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	
+	<meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+	<meta name="description" content="{% block meta_description %}{% endblock %}">
+	<title>{% block meta_title %}{% endblock %}{% if settings.SITE_TITLE %} | {{ settings.SITE_TITLE }}{% endif %}</title>
+	<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
+	{% ifinstalled mezzanine.blog %}
+		<link rel="alternate" type="application/rss+xml" title="RSS" href="{% url 'blog_post_feed' 'rss' %}">
+		<link rel="alternate" type="application/atom+xml" title="Atom" href="{% url 'blog_post_feed' 'atom' %}">
+	{% endifinstalled %}
+
+	{% compress css %}
+		<link rel="stylesheet" href="{% static 'css/base.css' %}">
+		{% if LANGUAGE_BIDI %}
+			<link rel="stylesheet" href="{% static 'css/rtl.css' %}">
+		{% endif %}
+		{% ifinstalled cartridge.shop %}
+			<link rel="stylesheet" href="{% static 'css/cartridge.css' %}">
+		{% if LANGUAGE_BIDI %}
+			<link rel="stylesheet" href="{% static 'css/cartridge.rtl.css' %}">
+		{% endif %}
+		{% endifinstalled %}
+		{% block extra_css %}{% endblock %}
+	{% endcompress %}
+
+	{% compress js %}
+		<script src="{% static 'mezzanine/js/'|add:settings.JQUERY_FILENAME %}"></script>
+		{% block extra_js %}{% endblock %}
+	{% endcompress %}
+
+	<!--[if lt IE 9]>
+		<script src="{% static "js/html5shiv.js" %}"></script>
+		<script src="{% static "js/respond.min.js" %}"></script>
+	<![endif]-->
+
+	{% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+	<div class='topbar'>
+		<div class='login'>
+			{% if not user.is_authenticated %}
+				<a href="/admin">{% trans 'Login' %}</a>
+			{% else %}
+				<a href="/admin">{% trans 'Admin' %}</a> | 
+				<a href="/admin/logout">{% trans 'Logout' %}</a>
+			{% endif %}
+		</div>
+
+		<div class='lang-select'>
+			<form class='lang-form' action="{% url 'set_language' %}" method="post">{% csrf_token %}
+				<input name="next" type="hidden" value="{{ request.path|slice:'3:' }}" />
+				<noscript><input class='set-button' type="submit" value="{% trans 'Set' %}" /></noscript>
+				<select name="language" onchange="this.form.submit()">
+					{% get_current_language as LANGUAGE_CODE %}
+					{% get_available_languages as LANGUAGES %}
+					{% get_language_info_list for LANGUAGES as languages %}
+					{% for language in languages %}
+						<option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+							{{ language.name_local }}
+						</option>
+					{% endfor %}
+				</select>
+			</form>
+		</div>	
+	</div>
+
+
+
+	<div class='wrap'>
+
+		<header>
+			<a href="/">
+				<h1>{{ settings.SITE_TITLE }}</h1>
+				{% if settings.SITE_TAGLINE %}<h2><i>{{ settings.SITE_TAGLINE }}</i></h2>{% endif %}
+			</a>
+		</header>
+		
+		<nav>
+			{% page_menu "menus/tabs.html" %}
+		</nav>
+
+		<main>
+			<h1>{% block title %}{% endblock %}</h1>
+			{% block main %}
+				<p>{% trans 'Content loading...' %} </p>
+			{% endblock main %}
+		</main>
+
+		<footer>
+			<p>{% trans 'Website by' %} <a href="http://keithirwin.us/">Keith Irwin</a>
+			<br>{% trans 'Powered by'%} <a href="http://mezzanine.jupo.org/">Mezzanine</a>/<a href="https://www.djangoproject.com/">Django</a>.  
+			<br>{% block page-footer %}{% endblock %}</p>
+		</footer>
+	</div>
+
+</body>
+
+</html>

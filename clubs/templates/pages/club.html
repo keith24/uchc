@@ -1,0 +1,50 @@
+{% extends "page.html" %}
+{% load i18n mezzanine_tags pages_tags %}
+
+{% block main %}{{ block.super }}
+
+<p>
+	<a href="{{ MEDIA_URL }}{{ page.club.img1 }}"><img src="{{ MEDIA_URL }}{% thumbnail page.club.img1 300 300 %}" width="18%"></a>
+	<a href="{{ MEDIA_URL }}{{ page.club.img2 }}"><img src="{{ MEDIA_URL }}{% thumbnail page.club.img2 300 300 %}" width="18%"></a>
+	<a href="{{ MEDIA_URL }}{{ page.club.img3 }}"><img src="{{ MEDIA_URL }}{% thumbnail page.club.img3 300 300 %}" width="18%"></a>
+	<a href="{{ MEDIA_URL }}{{ page.club.img4 }}"><img src="{{ MEDIA_URL }}{% thumbnail page.club.img4 300 300 %}" width="18%"></a>
+	<a href="{{ MEDIA_URL }}{{ page.club.img5 }}"><img src="{{ MEDIA_URL }}{% thumbnail page.club.img5 300 300 %}" width="18%"></a>
+</p>
+
+	<p>
+		{% if page.club.website %}
+		{% editable page.club.website %}
+			<a href="{{ page.club.website }}">{{ page.club.website }}</a>
+		{% endeditable %}
+		<br>
+		{% endif %}
+
+		{% if page.club.founded %}
+		{% editable page.club.founded %}
+			{% trans 'Founded' %}: {{ page.club.founded }}
+		{% endeditable %}
+		<br>
+		{% endif %}
+		
+		{% if page.club.city or page.club.country %}
+			{% trans 'Location' %}:
+			{% editable page.club.city %}
+				{{ page.club.city }},
+			{% endeditable %}
+			{% editable page.club.country %}
+				{{ page.club.country }}
+			{% endeditable %}
+		{% endif %}
+	</p>
+
+	<h2>{% trans 'About' %}</h2>
+
+	{% if page.club.blurb %}
+	<p>{% editable page.club.blurb %}
+		{{ page.club.blurb }}
+	{% endeditable %}</p>
+	{% endif %}
+
+	<p><a href="/clubs">&lt; {% trans 'Back to all clubs' %}</a></p>
+
+{% endblock main %}

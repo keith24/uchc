@@ -1,0 +1,6 @@
+{% extends "page.html" %}
+{% load mezzanine_tags pages_tags %}
+
+{% block main %}{{ block.super }}
+	{% page_menu page "menus/clubs.html" %}
+{% endblock main %}
